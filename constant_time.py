@@ -23,7 +23,7 @@ def constant_time():
         currWeekday = time.gmtime().tm_wday
         currMillisec = int(currTime.microsecond/10000)  # update this (to be more accurate)
         currTuple = (currTime.year, currTime.month, currTime.day, currWeekday, currTime.hour, currTime.minute, currTime.second, currMillisec)
-        # print(currTuple)
+        print(currTuple)
         toWrite = bytearray(str(currTuple) + "\n", 'utf-8')
         ser.write(toWrite)
 
