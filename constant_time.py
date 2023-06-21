@@ -1,33 +1,27 @@
-from machine import Pin
-from machine import ADC
+from datetime import datetime
 import time
-from rtc import *
-from machine import UART
+import serial
 
-if __name__ == "__main__":
-    MudwattRTC = RTC()
-    # while(True):
-    #     currTime = MudwattRTC.get_time()
-    #     print(currTime)
+"""
+Writes current time as a tuple to serial
+"""
 
-    # ntptime.settime()
-    # currTime = time.localtime()
-    # print(currTime)
-    # MudwattRTC = RTC()
-    # MudwattRTC.set_time(currTime)
+PORT = '/dev/ttyACM2'
+# PORT = '/dev/ttyACM3'
 
+def constant_time():
+    ser = serial.Serial(PORT) # open serial port
+    ser.baudrate = 19200
 
-    uart = UART(1, 19200)                         # init with given baudrate
-    uart.init(19200, bits=8, parity=None, stop=1) # init with given parameters
+    while True: # runs indefinitely
+        currTime = datetime.utcnow()
+        currWeekday = time.gmtime().tm_wday
+        currMillisec = int(currTime.microsecond/10000) # update this (to be more accurate)
+        currTuple = (currTime.year, currTime.month, currTime.day, currWeekday, currTime.hour, currTime.minute, currTime.second, currMillisec)
+        # print(currTuple)
+        toWrite = bytearray(str(currTuple) + "\n", 'utf-8')
+        ser.write(toWrite)
 
-    # read a line
-    line = uart.readline()     # read a line
-    print(line)
+    ser.close() # close serial port
 
-    """
-    uart.read(10)       # read 10 characters, returns a bytes object
-    uart.read()         # read all available characters
-    uart.readline()     # read a line
-    uart.readinto(buf)  # read and store into the given buffer
-    uart.write('abc')   # write the 3 characters
-    """
+constant_time()
