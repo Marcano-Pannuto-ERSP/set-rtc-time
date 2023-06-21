@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # MudwattRTC = RTC()
     # MudwattRTC.set_time(currTime)
 
-
+    print("Initializing UART")
     uart = UART(1, 19200)                         # init with given baudrate
     uart.init(19200, bits=8, parity=None, stop=1) # init with given parameters
 
