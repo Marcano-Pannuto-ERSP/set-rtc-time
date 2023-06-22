@@ -30,5 +30,6 @@ def constant_time():
         now = time.monotonic()
 
     ser.close() # close serial port
+    return
 
 constant_time()
