@@ -1,10 +1,9 @@
-import time
 import sys
 from rtc import *
 from machine import Pin
 
 """
-Runs on the pico (which is connected to RTC)
+Runs on the RPi pico (which is connected to RTC)
 
 Initializes the RTC by:
 - synchronizing time on RTC to time on server
@@ -50,8 +49,13 @@ if __name__ == "__main__":
 
     # read a line from serial and set the RTC to that time
     line = sys.stdin.readline()
-    print(line)
-    MudwattRTC.set_time(line)
+
+    # parse back into a tuple
+    timeTuple = line[1:-2]  # remove parentheses
+    split_list = timeTuple.split(", ")
+    int_tuple = tuple([int(x) for x in split_list])
+
+    MudwattRTC.set_time(int_tuple)
 
     # enable trickle charging for the backup battery
     MudwattRTC.enable_trickle()
