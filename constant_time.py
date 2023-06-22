@@ -9,7 +9,7 @@ Writes current time as a tuple to serial
 PORT = '/dev/ttyACM2'
 # PORT = '/dev/ttyACM3'
 INTERVAL = 15  # in seconds
-DELAY = 0.25  # in seconds
+DELAY = 0.20  # in seconds
 
 def constant_time():
     ser = serial.Serial(PORT) # open serial port
