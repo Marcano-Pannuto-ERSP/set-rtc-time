@@ -3,13 +3,13 @@ from rtc import *
 import time
 
 """
-test for seeing if we can measure accuracy of time
+helper file for testing the accuracy of time (the client is pico)
 """
 
 def pico_test_time():
     MudwattRTC = RTC()
 
-    time.sleep(1)
+    time.sleep(0.005)
     # Request a time from the server
     sys.stdout.write("this is a request\n")
     t0 = MudwattRTC.get_time()

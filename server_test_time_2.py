@@ -3,7 +3,7 @@ import serial
 import time
 
 """
-test for seeing if we can measure accuracy of time (server side)
+test for seeing if we can measure accuracy of time (the client is automaton)
 """
 
 PORT = '/dev/ttyACM5'

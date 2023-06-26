@@ -52,10 +52,10 @@ if __name__ == "__main__":
 
     # parse back into a tuple
     timeTuple = line[1:-2]  # remove parentheses
-    split_list = timeTuple.split(", ")
-    int_tuple = tuple([int(x) for x in split_list])
+    splitList = timeTuple.split(", ")
+    intTuple = tuple([int(x) for x in splitList])
 
-    MudwattRTC.set_time(int_tuple)
+    MudwattRTC.set_time(intTuple)
     # print(MudwattRTC.get_time())
 
     # enable trickle charging for the backup battery
@@ -66,21 +66,21 @@ if __name__ == "__main__":
 
     # Enable or disable automatic switch over from the crystal to the internal RC clock
     # Default FOS to 1, AOS to 0, and change them if user used the flags
-    os_ctrl = MudwattRTC.read_register(0x1C)
+    osCtrl = MudwattRTC.read_register(0x1C)
     FOSmask = 0b00001000
     if "-f" in sys.argv:
         # set FOS to 0
-        FOSresult = os_ctrl & ~FOSmask
+        FOSresult = osCtrl & ~FOSmask
     else:
         # set FOS to 1 (default)
-        FOSresult = os_ctrl | FOSmask
+        FOSresult = osCtrl | FOSmask
     MudwattRTC.write_register(0x1C, FOSresult)
     
     AOSmask = 0b00010000
     if "-a" in sys.argv:
         # set AOS to 1
-        AOSresult = os_ctrl | AOSmask
+        AOSresult = osCtrl | AOSmask
     else:
         # set AOS to 0 (default)
-        AOSresult = os_ctrl & ~AOSmask
+        AOSresult = osCtrl & ~AOSmask
     MudwattRTC.write_register(0x1C, AOSresult)

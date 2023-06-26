@@ -15,16 +15,16 @@ def constant_time():
     ser = serial.Serial(PORT) # open serial port
     ser.baudrate = 19200
 
-    start_time = time.monotonic()
-    end_time = start_time + INTERVAL
+    startTime = time.monotonic()
+    endTime = startTime + INTERVAL
     now = time.monotonic()
 
-    while now < end_time:   # runs for the specified interval
+    while now < endTime:   # runs for the specified interval
         currTime = datetime.utcnow() # + timedelta(milliseconds = OFFSET)
         currWeekday = time.gmtime().tm_wday
         currMillisec = int(currTime.microsecond/10000)  # update this (to be more accurate)
         currTuple = (currTime.year, currTime.month, currTime.day, currWeekday, currTime.hour, currTime.minute, currTime.second, currMillisec)
-        # print(currTuple)
+        print(currTuple)
         toWrite = bytearray(str(currTuple) + "\n", 'utf-8')
         ser.write(toWrite)
 

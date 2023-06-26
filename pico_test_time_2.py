@@ -3,7 +3,7 @@ from rtc import *
 import time
 
 """
-test for seeing if we can measure accuracy of time
+helper file for testing the accuracy of time (the server is pico)
 """
 
 def pico_test_time_2():
