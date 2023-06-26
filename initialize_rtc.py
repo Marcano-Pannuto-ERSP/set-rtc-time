@@ -44,7 +44,7 @@ def disable_pins():
     MudwattRTC.write_register(0x27, IOBMresult)
     
 
-if __name__ == "__main__":
+def initialize_rtc():
     MudwattRTC = RTC()
 
     # read a line from serial and set the RTC to that time

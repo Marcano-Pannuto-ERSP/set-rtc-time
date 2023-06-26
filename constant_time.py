@@ -7,13 +7,13 @@ Writes current time as a tuple to serial
 """
 
 PORT = '/dev/ttyACM5'
-INTERVAL = 15  # in seconds
-DELAY = 0.20  # in seconds
+INTERVAL = 10  # in seconds
+DELAY = 0.50  # in seconds
 OFFSET = 560 # in milliseconds
 
 def constant_time():
     ser = serial.Serial(PORT) # open serial port
-    ser.baudrate = 19200
+    ser.baudrate = 115200
 
     startTime = time.monotonic()
     endTime = startTime + INTERVAL
