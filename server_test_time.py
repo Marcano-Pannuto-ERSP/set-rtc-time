@@ -1,11 +1,12 @@
 import datetime
 import serial
+import time
 
 """
 test for seeing if we can measure accuracy of time (server side)
 """
 
-PORT = '/dev/ttyACM2'
+PORT = '/dev/ttyACM5'
 
 def server_test_time():
     # Find timestamp for receiving request packet
@@ -15,7 +16,6 @@ def server_test_time():
     ser.reset_input_buffer()
     ser.reset_output_buffer()
 
-    # Call pico_test_time function
     ser.write(bytearray("\x01import pico_test_time;pico_test_time.pico_test_time();\x04\x02", 'utf-8'))
 
     line = ser.readline()
@@ -23,12 +23,11 @@ def server_test_time():
         print(line.decode('utf-8')[3:-2])
         line = ser.readline()
     print(line)
-    t1 = datetime.datetime.now()
+    t1 = datetime.datetime.utcnow()
 
     # Record timestamp of sending response packet
-    # time.sleep(1)
     ser.write(bytearray("this is a response\r\n", 'utf-8'))
-    t2 = datetime.datetime.now()
+    t2 = datetime.datetime.utcnow()
 
     print(f"t1: {t1}, t2: {t2}")
 

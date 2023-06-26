@@ -56,6 +56,7 @@ if __name__ == "__main__":
     int_tuple = tuple([int(x) for x in split_list])
 
     MudwattRTC.set_time(int_tuple)
+    # print(MudwattRTC.get_time())
 
     # enable trickle charging for the backup battery
     MudwattRTC.enable_trickle()
