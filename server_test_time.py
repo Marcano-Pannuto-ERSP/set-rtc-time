@@ -8,8 +8,8 @@ test for seeing if we can measure accuracy of time (the server is automaton)
 """
 
 PORT = '/dev/ttyACM5'
-TRIALS = 1000
-STATUS = 50
+TRIALS = 100000
+STATUS = 1000
 
 def server_test_time():
     offsetAvg = []
@@ -39,7 +39,7 @@ def server_test_time():
         # Record timestamps from pico
         picoStamps = ser.readline()
 
-        # Prints timestamp
+        # Prints timestamps
         # print(f"t1: {t1}, t2: {t2}")
         # print(picoStamps)
 
