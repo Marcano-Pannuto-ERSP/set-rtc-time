@@ -9,7 +9,7 @@ Writes current time as a tuple to serial
 PORT = '/dev/ttyACM5'
 INTERVAL = 15  # in seconds
 DELAY = 0.20  # in seconds
-OFFSET = 320 # in milliseconds
+OFFSET = 560 # in milliseconds
 
 def constant_time():
     ser = serial.Serial(PORT) # open serial port
@@ -20,11 +20,11 @@ def constant_time():
     now = time.monotonic()
 
     while now < endTime:   # runs for the specified interval
-        currTime = datetime.utcnow() # + timedelta(milliseconds = OFFSET)
+        currTime = datetime.utcnow() + timedelta(milliseconds = OFFSET)
         currWeekday = time.gmtime().tm_wday
         currMillisec = int(currTime.microsecond/10000)  # update this (to be more accurate)
         currTuple = (currTime.year, currTime.month, currTime.day, currWeekday, currTime.hour, currTime.minute, currTime.second, currMillisec)
-        print(currTuple)
+        # print(currTuple)
         toWrite = bytearray(str(currTuple) + "\n", 'utf-8')
         ser.write(toWrite)
 

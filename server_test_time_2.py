@@ -8,7 +8,7 @@ test for seeing if we can measure accuracy of time (the client is automaton)
 """
 
 PORT = '/dev/ttyACM5'
-TRIALS = 100000
+TRIALS = 10000
 STATUS = 1000
 
 def server_test_time_2():

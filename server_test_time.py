@@ -8,8 +8,8 @@ test for seeing if we can measure accuracy of time (the server is automaton)
 """
 
 PORT = '/dev/ttyACM5'
-TRIALS = 100000
-STATUS = 1000
+TRIALS = 1000
+STATUS = 100
 
 def server_test_time():
     offsetAvg = []
