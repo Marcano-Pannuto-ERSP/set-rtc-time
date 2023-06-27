@@ -43,7 +43,7 @@ class RTC:
         self.spi.write(bytes([0x80 | addr_start]) + data)
         self.cs.value(1)
 
-    def enable_trickle(self):
+    def enable_trickle(self, resistor):
         self.write_register(0x1F, 0x9D)
         # Enable trickle with 3k Ohm resistor, and schottky diode
         self.write_register(0x20, 0xA5)
@@ -103,7 +103,6 @@ class RTC:
     def get_time_seconds(self):
         rtc_calendar = self.get_time()
         calendar = (rtc_calendar[0] + 2000, rtc_calendar[1], rtc_calendar[2], rtc_calendar[4], rtc_calendar[5], rtc_calendar[6], rtc_calendar[3], 0)
-        print(calendar)
         return (time.mktime(calendar), rtc_calendar[7])
 
     def get_time(self):
