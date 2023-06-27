@@ -1,4 +1,5 @@
 from machine import Pin, SPI
+import time
 
 class RTC:
     def __init__(self):
@@ -48,7 +49,7 @@ class RTC:
         self.write_register(0x20, 0xA5)
         self.write_register(0x1F, 0x00)
 
-    def set_time(self, time):
+    def __set_time_calendar(self, calendar):
         tmp_time = bytearray(self.read_bulk(0, 8))
 
         def to_bcd(value):
@@ -62,29 +63,48 @@ class RTC:
             return result
 
         # Hundredths
-        tmp_time[0] = to_bcd(time[7])
+        tmp_time[0] = to_bcd(calendar[7])
         # Seconds
         tmp_time[1] &= 0x80
-        tmp_time[1] |= to_bcd(time[6])
+        tmp_time[1] |= to_bcd(calendar[6])
         # Minutes
         tmp_time[2] &= 0x80
-        tmp_time[2] |= to_bcd(time[5])
+        tmp_time[2] |= to_bcd(calendar[5])
         # Hours
         tmp_time[3] &= 0xC0
-        tmp_time[3] |= to_bcd(time[4])
+        tmp_time[3] |= to_bcd(calendar[4])
         # Day of month
         tmp_time[4] &= 0xC0
-        tmp_time[4] |= to_bcd(time[2])
+        tmp_time[4] |= to_bcd(calendar[2])
         # Month
         tmp_time[5] &= 0xE0
-        tmp_time[5] |= to_bcd(time[1])
+        tmp_time[5] |= to_bcd(calendar[1])
         # Year
-        tmp_time[6] = to_bcd(time[0])
+        tmp_time[6] = to_bcd(calendar[0])
         # Day of week
         tmp_time[7] &= 0xF8
-        tmp_time[7] |= to_bcd(time[3])
+        tmp_time[7] |= to_bcd(calendar[3])
 
         self.write_bulk(0x0, tmp_time)
+
+    def __set_time_seconds(self, time_):
+        calendar = time.gmtime(time_[0])
+        rtc_calendar = (calendar[0] % 100, calendar[1], calendar[2], calendar[6], calendar[3], calendar[4], calendar[5], time_[1])
+        self.__set_time_calendar(rtc_calendar)
+
+    def set_time(self, time):
+        if len(time) == 2:
+            self.__set_time_seconds(time)
+        elif len(time) == 8:
+            self.__set_time_calendar(time)
+        else:
+            raise TypeError('unknown argument')
+
+    def get_time_seconds(self):
+        rtc_calendar = self.get_time()
+        calendar = (rtc_calendar[0] + 2000, rtc_calendar[1], rtc_calendar[2], rtc_calendar[4], rtc_calendar[5], rtc_calendar[6], rtc_calendar[3], 0)
+        print(calendar)
+        return (time.mktime(calendar), rtc_calendar[7])
 
     def get_time(self):
         tmp_time = bytearray(self.read_bulk(0, 8))
