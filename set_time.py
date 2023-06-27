@@ -39,11 +39,6 @@ def change_time(offset):
         timeList[1] -= 100 * toAdd
         timeList[0] += toAdd
 
-    # if there's negative hundreths
-    if timeList[1] < 0:
-        timeList[1] += 100
-        timeList[0] -= 1
-
     # adds seconds to the time
     timeList[0] += offsetSec
 
