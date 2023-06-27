@@ -10,14 +10,6 @@ Initializes the RTC by:
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
-
-Run with:
-ampy -p <port> run main.py [-f] [-a]
--f means set FOS to 0 (no automatic switching when an oscillator failure is detected)
--a means set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
-
-no flags means FOS is set to 1 (automatic switching when an oscillator failure is detected)
-and AOS is set to 0 (will use XT oscillator when the system is powered from the battery)
 """
 
 # disable unused pins (i.e., all pins except SPI and VBAT)
@@ -43,7 +35,7 @@ def disable_pins(MudwattRTC):
     MudwattRTC.write_register(0x27, IOBMresult)
     
 
-def initialize_rtc():
+def initialize_rtc(f, a):
     MudwattRTC = RTC()
 
     # enable trickle charging for the backup battery
@@ -56,7 +48,7 @@ def initialize_rtc():
     # Default FOS to 1, AOS to 0, and change them if user used the flags
     osCtrl = MudwattRTC.read_register(0x1C)
     FOSmask = 0b00001000
-    if "-f" in sys.argv:
+    if f == True:
         # set FOS to 0
         FOSresult = osCtrl & ~FOSmask
     else:
@@ -65,12 +57,10 @@ def initialize_rtc():
     MudwattRTC.write_register(0x1C, FOSresult)
     
     AOSmask = 0b00010000
-    if "-a" in sys.argv:
+    if a == True:
         # set AOS to 1
         AOSresult = osCtrl | AOSmask
     else:
         # set AOS to 0 (default)
         AOSresult = osCtrl & ~AOSmask
     MudwattRTC.write_register(0x1C, AOSresult)
-
-initialize_rtc()
