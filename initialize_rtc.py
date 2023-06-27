@@ -22,7 +22,7 @@ and AOS is set to 0 (will use XT oscillator when the system is powered from the 
 """
 
 # disable unused pins (i.e., all pins except SPI and VBAT)
-def disable_pins():
+def disable_pins(MudwattRTC):
     # disable EXBM, WDBM, RSEN, O4EN, O3EN, O1EN
     register = MudwattRTC.read_register(0x30)
     mask = 0b11001111
@@ -62,7 +62,7 @@ def initialize_rtc():
     MudwattRTC.enable_trickle()
 
     # disable unused pins
-    disable_pins()
+    disable_pins(MudwattRTC)
 
     # Enable or disable automatic switch over from the crystal to the internal RC clock
     # Default FOS to 1, AOS to 0, and change them if user used the flags
@@ -84,3 +84,5 @@ def initialize_rtc():
         # set AOS to 0 (default)
         AOSresult = osCtrl & ~AOSmask
     MudwattRTC.write_register(0x1C, AOSresult)
+
+initialize_rtc()

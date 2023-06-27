@@ -6,7 +6,7 @@ import serial
 Writes current time as a tuple to serial
 """
 
-PORT = '/dev/ttyACM5'
+PORT = '/dev/ttyACM2'
 INTERVAL = 10  # in seconds
 DELAY = 0.50  # in seconds
 OFFSET = 560 # in milliseconds
@@ -32,6 +32,5 @@ def constant_time():
         now = time.monotonic()
 
     ser.close() # close serial port
-    return
 
 constant_time()
