@@ -19,5 +19,3 @@ def pico_test_time():
     t3 = MudwattRTC.get_time()
 
     sys.stdout.write(f"t0: {t0}, t3: {t3}\n")
-
-pico_test_time()

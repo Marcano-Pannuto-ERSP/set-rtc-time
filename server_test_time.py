@@ -7,11 +7,8 @@ import numpy
 test for seeing if we can measure accuracy of time (the server is automaton)
 """
 
-PORT = '/dev/ttyACM2'
-TRIALS = 100
-STATUS = 20
-
-def server_test_time():
+def server_test_time(PORT, TRIALS):
+    STATUS = TRIALS // 5
     offsetAvg = []
     for x in range(TRIALS):
         # Find timestamp for receiving request packet
@@ -27,9 +24,7 @@ def server_test_time():
         # Finds the request
         line = ser.readline()
         while(line.decode('utf-8')[3:-2] != "this is a request"):
-            # print(line.decode('utf-8')[3:-2])
             line = ser.readline()
-        # print(line)
         t1 = datetime.datetime.utcnow()
 
         # Record timestamp of sending response packet
@@ -38,10 +33,6 @@ def server_test_time():
 
         # Record timestamps from pico
         picoStamps = ser.readline()
-
-        # Prints timestamps
-        # print(f"t1: {t1}, t2: {t2}")
-        # print(picoStamps)
 
         ser.close()
 
@@ -66,11 +57,9 @@ def server_test_time():
 
         # Keep track of trials
         if x % STATUS == 0:
-            print(x)
+            print(str(x) + " trials to check time accuracy completed")
 
     toReturn = sum(offsetAvg)/TRIALS
     print("Average offset in seconds: " + str(toReturn))
     print("Standard Deviation: " + str(numpy.std(offsetAvg)))
     return toReturn
-
-# server_test_time()

@@ -6,7 +6,6 @@ from machine import Pin
 Runs on the RPi pico (which is connected to RTC)
 
 Initializes the RTC by:
-- synchronizing time on RTC to time on server
 - enabling trickle charging for backup battery
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
@@ -46,17 +45,6 @@ def disable_pins(MudwattRTC):
 
 def initialize_rtc():
     MudwattRTC = RTC()
-
-    # read a line from serial and set the RTC to that time
-    line = sys.stdin.readline()
-
-    # parse back into a tuple
-    timeTuple = line[1:-2]  # remove parentheses
-    splitList = timeTuple.split(", ")
-    intTuple = tuple([int(x) for x in splitList])
-
-    MudwattRTC.set_time(intTuple)
-    # print(MudwattRTC.get_time())
 
     # enable trickle charging for the backup battery
     MudwattRTC.enable_trickle()
