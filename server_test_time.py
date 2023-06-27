@@ -53,7 +53,6 @@ def server_test_time(PORT, TRIALS):
         secondHalf = t2 - t3
         finalResult = (firstHalf + secondHalf)/2
         offsetAvg.append(finalResult.total_seconds())
-        # print(finalResult.total_seconds())
 
         # Keep track of trials
         if x % STATUS == 0:
