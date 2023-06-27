@@ -7,9 +7,9 @@ import numpy
 test for seeing if we can measure accuracy of time (the server is automaton)
 """
 
-PORT = '/dev/ttyACM5'
-TRIALS = 1000
-STATUS = 100
+PORT = '/dev/ttyACM2'
+TRIALS = 100
+STATUS = 20
 
 def server_test_time():
     offsetAvg = []
@@ -71,5 +71,6 @@ def server_test_time():
     toReturn = sum(offsetAvg)/TRIALS
     print("Average offset in seconds: " + str(toReturn))
     print("Standard Deviation: " + str(numpy.std(offsetAvg)))
+    return toReturn
 
-server_test_time()
+# server_test_time()

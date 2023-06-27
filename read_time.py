@@ -3,7 +3,7 @@ from rtc import *
 from machine import Pin
 
 """
-Function to easily check the time on the RTC
+Function to easily check the time on the RTC (runs on the pico)
 """
 
 def read_time():
