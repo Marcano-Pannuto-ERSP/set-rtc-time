@@ -10,6 +10,7 @@ Initializes the RTC by:
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
+- writing to register 1 bit 7 to signal that this program initialized the RTC
 """
 
 # disable unused pins (i.e., all pins except SPI and VBAT)
@@ -75,3 +76,9 @@ def initialize_rtc(f, a):
         # set AOS to 0 (default)
         AOSresult = osCtrl & ~AOSmask
     MudwattRTC.write_register(0x1C, AOSresult)
+
+    # Write to bit 7 of register 1 to signal that this program initialized the RTC
+    sec = MudwattRTC.read_register(0x01)
+    secMask = 0b10000000
+    secResult = sec | secMask
+    MudwattRTC.write_register(0x01, secResult)

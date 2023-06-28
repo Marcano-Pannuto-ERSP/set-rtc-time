@@ -10,6 +10,7 @@ Initializes the RTC by:
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
+- writing to register 1 bit 7 to signal that this program initialized the RTC
 
 ## Setup
 The following files are written in Micropython and need to be uploaded to the RPi Pico:
