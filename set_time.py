@@ -19,6 +19,9 @@ def set_time():
 
     MudwattRTC.set_time(intTuple)
 
+"""
+Change the time of the RTC according to the offset given
+"""
 
 def change_time(offset):
     MudwattRTC = RTC()
