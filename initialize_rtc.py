@@ -26,6 +26,9 @@ def disable_pins(MudwattRTC):
     O4BMresult = O4BM & ~O4BMmask
     MudwattRTC.write_register(0x3F, O4BMresult)
 
+    # get access to BATMODE I/O register
+    MudwattRTC.write_register(0x1F, 0x9D)
+
     # disable SPI when we lose Vcc
     # set the BATMODE I/O register's 7th bit to 0
     # which means that the RTC will disable I/O interface in absence of vcc
@@ -44,6 +47,9 @@ def initialize_rtc(f, a):
     # disable unused pins
     disable_pins(MudwattRTC)
 
+    # get access to oscillator control register
+    MudwattRTC.write_register(0x1F, 0xA1)
+
     # Enable or disable automatic switch over from the crystal to the internal RC clock
     # Default FOS to 1, AOS to 0, and change them if user used the flags
     osCtrl = MudwattRTC.read_register(0x1C)
@@ -55,6 +61,11 @@ def initialize_rtc(f, a):
         # set FOS to 1 (default)
         FOSresult = osCtrl | FOSmask
     MudwattRTC.write_register(0x1C, FOSresult)
+
+    osCtrl = MudwattRTC.read_register(0x1C)
+    
+    # get access to oscillator control register
+    MudwattRTC.write_register(0x1F, 0xA1)
     
     AOSmask = 0b00010000
     if a == True:

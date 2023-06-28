@@ -43,7 +43,7 @@ class RTC:
         self.spi.write(bytes([0x80 | addr_start]) + data)
         self.cs.value(1)
 
-    def enable_trickle(self, resistor):
+    def enable_trickle(self):
         self.write_register(0x1F, 0x9D)
         # Enable trickle with 3k Ohm resistor, and schottky diode
         self.write_register(0x20, 0xA5)
