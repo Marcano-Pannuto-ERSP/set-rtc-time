@@ -1,3 +1,5 @@
+![GitHub](https://img.shields.io/github/license/Marcano-Pannuto-ERSP/set-rtc-time)
+
 # Setting RTC to UTC time
 
 ## Description
