@@ -1,5 +1,5 @@
-from machine import Pin, SPI
 import time
+from machine import Pin, SPI
 
 class RTC:
     def __init__(self):
@@ -89,7 +89,16 @@ class RTC:
 
     def __set_time_seconds(self, time_):
         calendar = time.gmtime(time_[0])
-        rtc_calendar = (calendar[0] % 100, calendar[1], calendar[2], calendar[6], calendar[3], calendar[4], calendar[5], time_[1])
+        rtc_calendar = (
+            calendar[0] % 100,
+            calendar[1],
+            calendar[2],
+            calendar[6],
+            calendar[3],
+            calendar[4],
+            calendar[5],
+            time_[1]
+        )
         self.__set_time_calendar(rtc_calendar)
 
     def set_time(self, time):
@@ -102,7 +111,16 @@ class RTC:
 
     def get_time_seconds(self):
         rtc_calendar = self.get_time()
-        calendar = (rtc_calendar[0] + 2000, rtc_calendar[1], rtc_calendar[2], rtc_calendar[4], rtc_calendar[5], rtc_calendar[6], rtc_calendar[3], 0)
+        calendar = (
+            rtc_calendar[0] + 2000,
+            rtc_calendar[1],
+            rtc_calendar[2],
+            rtc_calendar[4],
+            rtc_calendar[5],
+            rtc_calendar[6],
+            rtc_calendar[3],
+            0
+        )
         return (time.mktime(calendar), rtc_calendar[7])
 
     def get_time(self):
