@@ -16,15 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from constant_time import constant_time
-from server_test_time import server_test_time
-import serial
-import time
-import math
-import argparse
-
 """
-Sets the time of the RTC with accuracy of 2 hundreths of seconds
+Sets the time of the RTC with accuracy of 2 hundredths of seconds
 (accuracy can be changed with --range command line argument)
 
 Initializes the RTC by:
@@ -43,13 +36,20 @@ python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a
 -a means set AOS to 1 (automatically switches to RC oscillator when the system
     is powered from the battery)
 
-no optional arguments means accuracy is within 2 hundreths of seconds, 100 trials are run to determine the average offset,
-FOS is set to 1 (automatic switching when an oscillator failure is detected),
-and AOS is set to 0 (will use XT oscillator when the system is powered from the battery)
+no optional arguments means accuracy is within 2 hundredths of seconds, 100 trials are run to
+determine the average offset, FOS is set to 1 (automatic switching when an oscillator failure is
+detected), and AOS is set to 0 (will use XT oscillator when the system is powered from the battery)
 """
 
-def update_rtc(PORT, RANGE, TRIALS, f, a):
-    ser = serial.Serial(PORT) # open serial port
+import math
+import argparse
+import serial
+from constant_time import constant_time
+from server_test_time import server_test_time
+
+
+def update_rtc(port, range, trials, f, a):
+    ser = serial.Serial(port) # open serial port
     ser.baudrate = 115200
 
     ser.reset_input_buffer()
@@ -59,29 +59,57 @@ def update_rtc(PORT, RANGE, TRIALS, f, a):
     ser.write(bytearray("\x01import set_time;set_time.set_time();\x04\x02", 'utf-8'))
 
     # Gets the timestamps from the server
-    constant_time(PORT)
+    constant_time(port)
 
     # Checks the offset
-    offset = int(server_test_time(PORT, TRIALS) * 100)
+    offset = int(server_test_time(port, trials) * 100)
 
     # If offset is too big keep changing the time
-    while math.fabs(offset) > RANGE:
+    while math.fabs(offset) > range:
         # Changes the time by the offset
-        ser.write(bytearray("\x01import set_time;set_time.change_time(" + str(offset) + ");\x04\x02", 'utf-8'))
-        offset = int(server_test_time(PORT, TRIALS) * 100)
+        ser.write(bytearray(
+            "\x01import set_time;set_time.change_time(" + str(offset) + ");\x04\x02",
+            'utf-8'
+        ))
+        offset = int(server_test_time(port, trials) * 100)
 
     # Initialize the pins
-    ser.write(bytearray("\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + ");\x04\x02", 'utf-8'))
+    ser.write(bytearray(
+        "\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + \
+        ");\x04\x02",
+        'utf-8'))
 
 # Command line arguments
-parser = argparse.ArgumentParser(description='Initialize the RTC and sets the time', epilog='no optional arguments means accuracy is within 2 hundreths of seconds, \
-    100 trials are run to determine the average offset, FOS is set to 1 (automatic switching when an oscillator failure is detected), \
-    and AOS is set to 0 (will use XT oscillator when the system is powered from the battery)')
-parser.add_argument('--port', type=str, required=True, help='sets the port the Raspberry Pi Pico is plugged into')
+parser = argparse.ArgumentParser(
+    description='Initialize the RTC and sets the time', \
+    epilog='no optional arguments means accuracy is within 2 hundredths of seconds, 100 trials are \
+        run to determine the average offset, FOS is set to 1 (automatic switching when an \
+        oscillator failure is detected), and AOS is set to 0 (will use XT oscillator when the \
+        system is powered from the battery)')
+parser.add_argument(
+    '--port',
+    type=str,
+    required=True,
+    help='sets the port the Raspberry Pi Pico is plugged into'
+)
 parser.add_argument('--range', type=int, default=2, help='sets the new accuracy range to RANGE')
-parser.add_argument('--trials', type=int, default=100, help='sets the new number of trials to get the average offset to TRIALS')
-parser.add_argument('-f', action='store_true', help='set FOS to 0 (no automatic switching when an oscillator failure is detected)')
-parser.add_argument('-a', action='store_true', help='set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)')
+parser.add_argument(
+    '--trials',
+    type=int,
+    default=100,
+    help='sets the new number of trials to get the average offset to TRIALS'
+)
+parser.add_argument(
+    '-f',
+    action='store_true',
+    help='set FOS to 0 (no automatic switching when an oscillator failure is detected)'
+)
+parser.add_argument(
+    '-a',
+    action='store_true',
+    help='set AOS to 1 (automatically switches to RC oscillator when the system is powered from \
+        the battery)'
+)
 args = parser.parse_args()
 
 update_rtc(args.port, args.range, args.trials, args.f, args.a)

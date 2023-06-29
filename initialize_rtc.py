@@ -16,10 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
-from rtc import *
-from machine import Pin
-
 """
 Runs on the RPi pico (which is connected to RTC)
 
@@ -30,6 +26,10 @@ Initializes the RTC by:
 - enabling/disabling automatic RC/XT oscillator switching according to user input
 - writing to register 1 bit 7 to signal that this program initialized the RTC
 """
+
+from machine import Pin
+from rtc import *
+
 
 # disable unused pins (i.e., all pins except SPI and VBAT)
 def disable_pins(MudwattRTC):
@@ -55,7 +55,7 @@ def disable_pins(MudwattRTC):
     IOBMmask = 0b10000000
     IOBMresult = IOBM & ~IOBMmask
     MudwattRTC.write_register(0x27, IOBMresult)
-    
+
 
 def initialize_rtc(f, a):
     MudwattRTC = RTC()
@@ -73,7 +73,7 @@ def initialize_rtc(f, a):
     # Default FOS to 1, AOS to 0, and change them if user used the flags
     osCtrl = MudwattRTC.read_register(0x1C)
     FOSmask = 0b00001000
-    if f == True:
+    if f:
         # set FOS to 0
         FOSresult = osCtrl & ~FOSmask
     else:
@@ -82,12 +82,12 @@ def initialize_rtc(f, a):
     MudwattRTC.write_register(0x1C, FOSresult)
 
     osCtrl = MudwattRTC.read_register(0x1C)
-    
+
     # get access to oscillator control register
     MudwattRTC.write_register(0x1F, 0xA1)
-    
+
     AOSmask = 0b00010000
-    if a == True:
+    if a:
         # set AOS to 1
         AOSresult = osCtrl | AOSmask
     else:

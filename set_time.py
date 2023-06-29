@@ -16,13 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+"""
+Reads the time sent by server over serial and uses it to set the time in the RTC
+"""
+
 import sys
 from rtc import *
-import time
 
-"""
-Reads the time from the server and uses it to set the time in the RTC
-"""
 
 def set_time():
     MudwattRTC = RTC()
@@ -40,7 +40,6 @@ def set_time():
 """
 Change the time of the RTC according to the offset given
 """
-
 def change_time(offset):
     MudwattRTC = RTC()
 
