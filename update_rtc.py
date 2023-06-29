@@ -6,7 +6,8 @@ import math
 import argparse
 
 """
-Sets the time of the RTC with accuracy of 2 hundreths of seconds (accuracy can be changed with --range command line argument)
+Sets the time of the RTC with accuracy of 2 hundreths of seconds
+(accuracy can be changed with --range command line argument)
 
 Initializes the RTC by:
 - enabling trickle charging for backup battery
@@ -19,8 +20,10 @@ python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a
 --port PORT sets the port the Raspberry Pi Pico is plugged into
 --range RANGE sets the new accuracy range to RANGE
 --trials TRIALS sets the new number of trials to get the average offset to TRIALS
--f means set FOS to 0 (no automatic switching when an oscillator failure is detected)
--a means set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
+-f means set FOS to 0 (no automatic switching when an oscillator failure is
+    detected)
+-a means set AOS to 1 (automatically switches to RC oscillator when the system
+    is powered from the battery)
 
 no optional arguments means accuracy is within 2 hundreths of seconds, 100 trials are run to determine the average offset,
 FOS is set to 1 (automatic switching when an oscillator failure is detected),

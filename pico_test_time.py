@@ -1,10 +1,12 @@
-import sys
-from rtc import *
-import time
+"""
+Helper file for testing the accuracy of time
+To be run on the RPi Pico (called by server_test_time.py)
+"""
 
-"""
-helper file for testing the accuracy of time (the client is pico)
-"""
+import sys
+import time
+from rtc import *
+
 
 def pico_test_time():
     MudwattRTC = RTC()
@@ -15,7 +17,7 @@ def pico_test_time():
     t0 = MudwattRTC.get_time()
 
     # Find timestamp for receiving a response
-    response = sys.stdin.readline()
+    sys.stdin.readline()
     t3 = MudwattRTC.get_time()
 
     sys.stdout.write(f"t0: {t0}, t3: {t3}\n")

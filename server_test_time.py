@@ -1,29 +1,33 @@
+"""
+Measure accuracy of the time that was set on the RTC
+The server is automaton and the client is the RTC
+"""
+
 import datetime
 import serial
-import time
 import numpy
 
-"""
-test for seeing if we can measure accuracy of time (the server is automaton)
-"""
 
-def server_test_time(PORT, TRIALS):
-    STATUS = TRIALS // 5
+def server_test_time(port, trials):
+    STATUS = trials // 5
     offsetAvg = []
-    for x in range(TRIALS):
+    for x in range(trials):
         # Find timestamp for receiving request packet
-        ser = serial.Serial(PORT) # open serial port
+        ser = serial.Serial(port) # open serial port
         ser.baudrate = 115200
 
         ser.reset_input_buffer()
         ser.reset_output_buffer()
 
         # Run pico script on automaton
-        ser.write(bytearray("\x01import pico_test_time;pico_test_time.pico_test_time();\x04\x02", 'utf-8'))
+        ser.write(bytearray(
+            "\x01import pico_test_time;pico_test_time.pico_test_time();\x04\x02",
+            'utf-8'
+            ))
 
         # Finds the request
         line = ser.readline()
-        while(line.decode('utf-8')[3:-2] != "this is a request"):
+        while line.decode('utf-8')[3:-2] != "this is a request":
             line = ser.readline()
         t1 = datetime.datetime.utcnow()
 
@@ -45,8 +49,24 @@ def server_test_time(PORT, TRIALS):
         t0Tuple = tuple([int(x) for x in t0List])
         t3Tuple = tuple([int(x) for x in t3List])
 
-        t0 = datetime.datetime(t1.year, t0Tuple[1], t0Tuple[2], t0Tuple[4], t0Tuple[5], t0Tuple[6], t0Tuple[7] * 1000)
-        t3 = datetime.datetime(t2.year, t3Tuple[1], t3Tuple[2], t3Tuple[4], t3Tuple[5], t3Tuple[6], t3Tuple[7] * 1000)
+        t0 = datetime.datetime(
+            t1.year,
+            t0Tuple[1],
+            t0Tuple[2],
+            t0Tuple[4],
+            t0Tuple[5],
+            t0Tuple[6],
+            t0Tuple[7] * 1000
+        )
+        t3 = datetime.datetime(
+            t2.year,
+            t3Tuple[1],
+            t3Tuple[2],
+            t3Tuple[4],
+            t3Tuple[5],
+            t3Tuple[6],
+            t3Tuple[7] * 1000
+        )
 
         # Get the offset
         firstHalf = t1 - t0
@@ -58,7 +78,7 @@ def server_test_time(PORT, TRIALS):
         if x % STATUS == 0:
             print(str(x) + " trials to check time accuracy completed")
 
-    toReturn = sum(offsetAvg)/TRIALS
+    toReturn = sum(offsetAvg)/trials
     print("Average offset in seconds: " + str(toReturn))
     print("Standard Deviation: " + str(numpy.std(offsetAvg)))
     return toReturn
