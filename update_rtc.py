@@ -25,6 +25,8 @@ Initializes the RTC by:
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
+- configuring the RTC alarm
+- writing to register 1 bit 7 to signal that this program initialized the RTC
 
 Run with:
 python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a]
@@ -35,10 +37,13 @@ python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a
     detected)
 -a means set AOS to 1 (automatically switches to RC oscillator when the system
     is powered from the battery)
+--pulse PULSE sets the length of pulse (1-3)
+-d means disable the RTC alarm
 
 no optional arguments means accuracy is within 2 hundredths of seconds, 100 trials are run to
 determine the average offset, FOS is set to 1 (automatic switching when an oscillator failure is
-detected), and AOS is set to 0 (will use XT oscillator when the system is powered from the battery)
+detected), AOS is set to 0 (will use XT oscillator when the system is powered from the battery),
+the alarm is enabled, and the alarm pulse is 1/4 seconds
 """
 
 import math
@@ -48,7 +53,7 @@ from constant_time import constant_time
 from server_test_time import server_test_time
 
 
-def update_rtc(port, range, trials, f, a):
+def update_rtc(port, range, trials, f, a, pulse, d):
     ser = serial.Serial(port) # open serial port
     ser.baudrate = 115200
 
@@ -76,7 +81,7 @@ def update_rtc(port, range, trials, f, a):
     # Initialize the pins
     ser.write(bytearray(
         "\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + \
-        ");\x04\x02",
+        "," + str(pulse) + "," + str(d) + ");\x04\x02",
         'utf-8'))
 
 # Command line arguments
@@ -110,6 +115,18 @@ parser.add_argument(
     help='set AOS to 1 (automatically switches to RC oscillator when the system is powered from \
         the battery)'
 )
+parser.add_argument(
+    '--pulse',
+    type=int,
+    default=0b11,
+    choices=range(1,4),
+    help='sets the length of pulse (1-3)'
+)
+parser.add_argument(
+    '-d',
+    action='store_true',
+    help='disable the RTC alarm'
+)
 args = parser.parse_args()
 
-update_rtc(args.port, args.range, args.trials, args.f, args.a)
+update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.d)

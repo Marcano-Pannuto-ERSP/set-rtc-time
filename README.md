@@ -12,6 +12,7 @@ Initializes the RTC by:
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
+- configuring the RTC alarm
 - writing to register 1 bit 7 to signal that this program initialized the RTC
 
 ## Setup
@@ -34,7 +35,10 @@ Run with:
 * `--trials TRIALS` sets the new number of trials to get the average offset to TRIALS. Default is 100
 * `-f` means set FOS to 0 (no automatic switching when an oscillator failure is detected)
 * `-a` means set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
+* `--pulse PULSE` sets the length of pulse: 1 means 1/8192 seconds for XT and 1/64 sec for RC; 2 means 1/64 s for both; 3 means 1/4 s for both
+* `-d` means disable the RTC's alarm
 
 If no optional arguments are entered, then the program will run 100 trials to determine the average offset, with time accuracy within 0.02 seconds, 
 FOS is set to 1 (automatic switching when an oscillator failure is detected),
-and AOS is set to 0 (will use XT oscillator when the system is powered from the battery)
+AOS is set to 0 (will use XT oscillator when the system is powered from the battery),
+the alarm is enabled, and the alarm pulse is 1/4 seconds
