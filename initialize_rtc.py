@@ -99,8 +99,8 @@ def initialize_rtc(f, a, pulse, d):
     # Configure AIRQ (alarm) interrupt
     # IM (level/pulse) AIE (enables interrupt) 0x12 intmask
     alarm = MudwattRTC.read_register(0x12)  
-    alarm = alarm & ~(0b01100000)
-    alarmMask = int(pulse) << 6
+    alarm = alarm & ~(0b01100100)
+    alarmMask = int(pulse) << 5
     if not d:
         alarmMask += 0b00000100
     alarmResult = alarm | alarmMask
