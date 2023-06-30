@@ -28,7 +28,7 @@ To communicate with the RTC, use [adafruit-ampy 1.1.0](https://pypi.org/project/
 ## How to run
 Run with:
 
-`python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a]`
+`python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-d]`
 
 * `--port PORT` sets the port the Raspberry Pi Pico is plugged into
 * `--range RANGE` sets the new accuracy range to RANGE (in hundredths of seconds). Default is 2

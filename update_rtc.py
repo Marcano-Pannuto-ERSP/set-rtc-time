@@ -29,7 +29,7 @@ Initializes the RTC by:
 - writing to register 1 bit 7 to signal that this program initialized the RTC
 
 Run with:
-python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a]
+python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-d]
 --port PORT sets the port the Raspberry Pi Pico is plugged into
 --range RANGE sets the new accuracy range to RANGE
 --trials TRIALS sets the new number of trials to get the average offset to TRIALS
