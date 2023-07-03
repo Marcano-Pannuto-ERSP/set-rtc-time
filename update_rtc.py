@@ -54,7 +54,7 @@ from constant_time import constant_time
 from server_test_time import server_test_time
 
 
-def update_rtc(port, range, trials, f, a, pulse, d):
+def update_rtc(port, range, trials, f, a, pulse, i):
     ser = serial.Serial(port) # open serial port
     ser.baudrate = 115200
 
@@ -82,7 +82,7 @@ def update_rtc(port, range, trials, f, a, pulse, d):
     # Initialize the pins
     ser.write(bytearray(
         "\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + \
-        "," + str(pulse) + "," + str(d) + ");\x04\x02",
+        "," + str(pulse) + "," + str(i) + ");\x04\x02",
         'utf-8'))
 
 # Command line arguments
@@ -131,4 +131,4 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.d)
+update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.i)
