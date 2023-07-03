@@ -57,6 +57,31 @@ def disable_pins(MudwattRTC):
     IOBMresult = IOBM & ~IOBMmask
     MudwattRTC.write_register(0x27, IOBMresult)
 
+# Set up registers that control the alarm
+def configure_alarm(MudwattRTC, pulse, i):
+    # Configure AIRQ (alarm) interrupt
+    # IM (level/pulse) AIE (enables interrupt) 0x12 intmask
+    # configure the OUT1S bit to see the output of the nIRQ pin
+    alarm = MudwattRTC.read_register(0x12)  
+    alarm = alarm & ~(0b01100100)
+    alarmMask = int(pulse) << 5
+    if i:
+        alarmMask += 0b00000100
+    alarmResult = alarm | alarmMask
+    MudwattRTC.write_register(0x12, alarmResult)
+
+    # Set Control2 register bits so that FOUT/nIRQ pin outputs nAIRQ
+    out = MudwattRTC.read_register(0x11)
+    outMask = 0b00000011
+    outResult = out | outMask
+    MudwattRTC.write_register(0x11, outResult)
+
+    # Set RPT bits in Countdown Timer Control register to control how often the alarm interrupt 
+    # repeats. Set it to 7 for now (once a second if hundredths alarm register contains 0)
+    timerControl = MudwattRTC.read_register(0x18)
+    timerMask = 0b00011100
+    timerResult = timerControl | timerMask
+    MudwattRTC.write_register(0x18, timerResult)
 
 def initialize_rtc(f, a, pulse, i):
     MudwattRTC = RTC()
@@ -96,22 +121,8 @@ def initialize_rtc(f, a, pulse, i):
         AOSresult = osCtrl & ~AOSmask
     MudwattRTC.write_register(0x1C, AOSresult)
 
-    # Configure AIRQ (alarm) interrupt
-    # IM (level/pulse) AIE (enables interrupt) 0x12 intmask
-    # configure the OUT1S bit to see the output of the nIRQ pin
-    alarm = MudwattRTC.read_register(0x12)  
-    alarm = alarm & ~(0b01100100)
-    alarmMask = int(pulse) << 5
-    if i:
-        alarmMask += 0b00000100
-    alarmResult = alarm | alarmMask
-    MudwattRTC.write_register(0x12, alarmResult)
-
-    # Set Control2 register bits so that FOUT/nIRQ pin outputs nAIRQ
-    out = MudwattRTC.read_register(0x11)
-    outMask = 0b00000011
-    outResult = out | outMask
-    MudwattRTC.write_register(0x11, outResult)
+    # Configure alarm
+    configure_alarm(MudwattRTC, pulse, i)
 
     # Write to bit 7 of register 1 to signal that this program initialized the RTC
     sec = MudwattRTC.read_register(0x01)

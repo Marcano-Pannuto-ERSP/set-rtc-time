@@ -139,3 +139,64 @@ class RTC:
         weekday = from_bcd(tmp_time[7] & 0x07)
 
         return (year, month, date, weekday, hours, minutes, seconds, hundredths)
+
+    """
+    Set the alarm registers to the calendar tuple parameter
+    calendar = (month, date, weekday, hours, minutes, seconds, hundredths)
+    No year value because there is no alarm year register
+    """
+    def set_alarm_calendar(self, calendar):
+        tmp_time = bytearray(self.read_bulk(8, 7))
+
+        def to_bcd(value):
+            result = 0
+            decade = 0
+            while value != 0:
+                digit = value % 10
+                value //= 10
+                result |= digit << (4 * decade)
+                decade += 1
+            return result
+
+        # Hundredths
+        tmp_time[0] = to_bcd(calendar[6])
+        # Seconds
+        tmp_time[1] &= 0x80
+        tmp_time[1] |= to_bcd(calendar[5])
+        # Minutes
+        tmp_time[2] &= 0x80
+        tmp_time[2] |= to_bcd(calendar[4])
+        # Hours
+        tmp_time[3] &= 0xC0
+        tmp_time[3] |= to_bcd(calendar[3])
+        # Day of month
+        tmp_time[4] &= 0xC0
+        tmp_time[4] |= to_bcd(calendar[1])
+        # Month
+        tmp_time[5] &= 0xE0
+        tmp_time[5] |= to_bcd(calendar[0])
+        # Day of week
+        tmp_time[6] &= 0xF8
+        tmp_time[6] |= to_bcd(calendar[2])
+
+        self.write_bulk(0x8, tmp_time)
+
+    """
+    Get the time stored in the alarm registers
+    returns (month, date, weekday, hours, minutes, seconds, hundredths)
+    """
+    def get_alarm_time(self):
+        tmp_time = bytearray(self.read_bulk(8, 7))
+
+        def from_bcd(value):
+            return (((value >> 4) & 0xF) * 10) + (value & 0xF)
+
+        hundredths = from_bcd(tmp_time[0])
+        seconds = from_bcd(tmp_time[1] & 0x7F)
+        minutes = from_bcd(tmp_time[2] & 0x7F)
+        hours = from_bcd(tmp_time[3] & 0x3F)
+        date = from_bcd(tmp_time[4] & 0x3F)
+        month = from_bcd(tmp_time[5] & 0x3F)
+        weekday = from_bcd(tmp_time[6] & 0x07)
+
+        return (month, date, weekday, hours, minutes, seconds, hundredths)
