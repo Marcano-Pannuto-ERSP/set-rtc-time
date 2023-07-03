@@ -107,7 +107,7 @@ def initialize_rtc(f, a, pulse, i):
     alarmResult = alarm | alarmMask
     MudwattRTC.write_register(0x12, alarmResult)
 
-    # Set Control2 register bits so that FOUT/nIRQ pin outputs nIRQ
+    # Set Control2 register bits so that FOUT/nIRQ pin outputs nAIRQ
     out = MudwattRTC.read_register(0x11)
     outMask = 0b00000011
     outResult = out | outMask

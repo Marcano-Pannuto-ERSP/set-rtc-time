@@ -13,6 +13,7 @@ Initializes the RTC by:
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
 - configuring the RTC alarm
+- outputting alarm interrupts to pin FOUT/nIRQ
 - writing to register 1 bit 7 to signal that this program initialized the RTC
 
 ## Setup
@@ -28,7 +29,7 @@ To communicate with the RTC, use [adafruit-ampy 1.1.0](https://pypi.org/project/
 ## How to run
 Run with:
 
-`python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-d]`
+`python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-i]`
 
 * `--port PORT` sets the port the Raspberry Pi Pico is plugged into
 * `--range RANGE` sets the new accuracy range to RANGE (in hundredths of seconds). Default is 2
@@ -41,4 +42,4 @@ Run with:
 If no optional arguments are entered, then the program will run 100 trials to determine the average offset, with time accuracy within 0.02 seconds, 
 FOS is set to 1 (automatic switching when an oscillator failure is detected),
 AOS is set to 0 (will use XT oscillator when the system is powered from the battery),
-the alarm is enabled, and the alarm pulse is 1/4 seconds
+the alarm is disabled, and the alarm pulse is 1/4 seconds

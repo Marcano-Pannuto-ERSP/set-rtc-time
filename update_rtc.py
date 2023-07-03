@@ -29,7 +29,7 @@ Initializes the RTC by:
 - writing to register 1 bit 7 to signal that this program initialized the RTC
 
 Run with:
-python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-d]
+python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-i]
 --port PORT sets the port the Raspberry Pi Pico is plugged into
 --range RANGE sets the new accuracy range to RANGE
 --trials TRIALS sets the new number of trials to get the average offset to TRIALS
@@ -44,7 +44,7 @@ python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a
 no optional arguments means accuracy is within 2 hundredths of seconds, 100 trials are run to
 determine the average offset, FOS is set to 1 (automatic switching when an oscillator failure is
 detected), AOS is set to 0 (will use XT oscillator when the system is powered from the battery),
-the alarm is enabled, and the alarm pulse is 1/4 seconds
+the alarm is disabled, and the alarm pulse is 1/4 seconds
 """
 
 import math
