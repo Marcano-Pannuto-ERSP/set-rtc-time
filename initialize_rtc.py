@@ -58,7 +58,7 @@ def disable_pins(MudwattRTC):
     MudwattRTC.write_register(0x27, IOBMresult)
 
 
-def initialize_rtc(f, a, pulse, d):
+def initialize_rtc(f, a, pulse, i):
     MudwattRTC = RTC()
 
     # enable trickle charging for the backup battery
@@ -101,7 +101,7 @@ def initialize_rtc(f, a, pulse, d):
     alarm = MudwattRTC.read_register(0x12)  
     alarm = alarm & ~(0b01100100)
     alarmMask = int(pulse) << 5
-    if not d:
+    if i:
         alarmMask += 0b00000100
     alarmResult = alarm | alarmMask
     MudwattRTC.write_register(0x12, alarmResult)

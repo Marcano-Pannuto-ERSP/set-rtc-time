@@ -36,7 +36,7 @@ Run with:
 * `-f` means set FOS to 0 (no automatic switching when an oscillator failure is detected)
 * `-a` means set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
 * `--pulse PULSE` sets the length of pulse: 1 means 1/8192 seconds for XT and 1/64 sec for RC; 2 means 1/64 s for both; 3 means 1/4 s for both
-* `-d` means disable the RTC's alarm
+* `-i` means enable the RTC's alarm
 
 If no optional arguments are entered, then the program will run 100 trials to determine the average offset, with time accuracy within 0.02 seconds, 
 FOS is set to 1 (automatic switching when an oscillator failure is detected),

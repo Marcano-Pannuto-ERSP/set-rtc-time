@@ -39,7 +39,7 @@ python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a
     is powered from the battery)
 --pulse PULSE sets the length of pulse: 1 means 1/8192 seconds for XT and 1/64 sec for RC;
     2 means 1/64 s for both; 3 means 1/4 s for both
--d means disable the RTC alarm
+-i means enable the RTC alarm
 
 no optional arguments means accuracy is within 2 hundredths of seconds, 100 trials are run to
 determine the average offset, FOS is set to 1 (automatic switching when an oscillator failure is
@@ -125,9 +125,9 @@ parser.add_argument(
         2 means 1/64 s for both; 3 means 1/4 s for both'
 )
 parser.add_argument(
-    '-d',
+    '-i',
     action='store_true',
-    help='disable the RTC alarm'
+    help='enable the RTC alarm'
 )
 args = parser.parse_args()
 
