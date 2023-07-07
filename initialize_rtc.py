@@ -82,6 +82,12 @@ def initialize_rtc(f, a, pulse, i):
     # get access to oscillator control register
     MudwattRTC.write_register(0x1F, 0xA1)
 
+    # clear the OF bit so that a failure isn't detected on start up
+    OF = MudwattRtc.read_register(0x1D)
+    OFmask = 0b00000010
+    OFresult = OF & ~OFmask
+    MudwattRTC.write_register(0x1D, OFresult)
+
     # Enable or disable automatic switch over from the crystal to the internal RC clock
     # Default FOS to 1, AOS to 0, and change them if user used the flags
     osCtrl = MudwattRTC.read_register(0x1C)
