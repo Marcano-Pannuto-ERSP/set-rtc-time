@@ -139,7 +139,7 @@ class RTC:
         minutes = from_bcd(tmp_time[2] & 0x7F)
         hours = from_bcd(tmp_time[3] & 0x3F)
         date = from_bcd(tmp_time[4] & 0x3F)
-        month = from_bcd(tmp_time[5] & 0x3F)
+        month = from_bcd(tmp_time[5] & 0x1F)
         year = from_bcd(tmp_time[6])
         weekday = from_bcd(tmp_time[7] & 0x07)
 
@@ -201,7 +201,7 @@ class RTC:
         minutes = from_bcd(tmp_time[2] & 0x7F)
         hours = from_bcd(tmp_time[3] & 0x3F)
         date = from_bcd(tmp_time[4] & 0x3F)
-        month = from_bcd(tmp_time[5] & 0x3F)
+        month = from_bcd(tmp_time[5] & 0x1F)
         weekday = from_bcd(tmp_time[6] & 0x07)
 
         return (month, date, weekday, hours, minutes, seconds, hundredths)
