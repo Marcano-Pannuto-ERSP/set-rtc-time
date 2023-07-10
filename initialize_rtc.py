@@ -83,7 +83,7 @@ def initialize_rtc(f, a, pulse, i):
     MudwattRTC.write_register(0x1F, 0xA1)
 
     # clear the OF bit so that a failure isn't detected on start up
-    OF = MudwattRtc.read_register(0x1D)
+    OF = MudwattRTC.read_register(0x1D)
     OFmask = 0b00000010
     OFresult = OF & ~OFmask
     MudwattRTC.write_register(0x1D, OFresult)

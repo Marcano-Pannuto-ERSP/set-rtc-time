@@ -12,7 +12,7 @@ class RTC:
 
     def init(self):
         self.spi = SPI(0, sck=Pin(2), mosi=Pin(3), miso=Pin(4), baudrate=2000000, phase=0)
-        self.cs = Pin(5, Pin.OUT, value=1)
+        self.cs = Pin(10, Pin.OUT, value=1)
 
     def deinit(self):
         self.spi.deinit()
