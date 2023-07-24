@@ -25,7 +25,15 @@ The following files are written in Micropython and need to be uploaded to the RP
 
 To communicate with the RTC, use [adafruit-ampy 1.1.0](https://pypi.org/project/adafruit-ampy/). This is the command to upload files to the Pico: `ampy --port [PORT] put [FILENAME]`
 
+Pin connections:
+
 The RTC's CS pin needs to be connected to the RPI's GP10 pin.
+
+* RTC - Pico
+* CS - GP10
+* SCK - GP2
+* SDO - GP4
+* SDI - GP3
 
 
 ## How to run
