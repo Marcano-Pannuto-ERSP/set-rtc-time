@@ -45,14 +45,14 @@ def disable_pins(MudwattRTC):
     MudwattRTC.write_register(0x27, IOBMresult)
 
 # Set up registers that control the alarm
-def configure_alarm(MudwattRTC, pulse, i):
+def configure_alarm(MudwattRTC, pulse, d):
     # Configure AIRQ (alarm) interrupt
     # IM (level/pulse) AIE (enables interrupt) 0x12 intmask
     # configure the OUT1S bit to see the output of the nIRQ pin
     alarm = MudwattRTC.read_register(0x12)  
     alarm = alarm & ~(0b01100100)
     alarmMask = int(pulse) << 5
-    if i:
+    if not d:
         alarmMask += 0b00000100
     alarmResult = alarm | alarmMask
     MudwattRTC.write_register(0x12, alarmResult)
@@ -70,7 +70,7 @@ def configure_alarm(MudwattRTC, pulse, i):
     timerResult = timerControl | timerMask
     MudwattRTC.write_register(0x18, timerResult)
 
-def initialize_rtc(f, a, pulse, i):
+def initialize_rtc(f, a, pulse, d):
     MudwattRTC = RTC()
 
     # enable trickle charging for the backup battery
@@ -115,7 +115,7 @@ def initialize_rtc(f, a, pulse, i):
     MudwattRTC.write_register(0x1C, AOSresult)
 
     # Configure alarm
-    configure_alarm(MudwattRTC, pulse, i)
+    configure_alarm(MudwattRTC, pulse, d)
 
     # Write to bit 7 of register 1 to signal that this program initialized the RTC
     sec = MudwattRTC.read_register(0x01)
