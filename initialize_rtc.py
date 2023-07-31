@@ -81,7 +81,9 @@ def configure_countdown(MudwattRTC, timer):
     # Sets the Countdown Timer Frequency and
     # the Timer Initial Value
     countdowntimer = MudwattRTC.read_register(0x18)
-    RPT = ((countdowntimer >> 2) << 5) >> 3
+    # clear TE first
+    MudwattRTC.write_register(0x18, countdowntimer & ~0b10000000)
+    RPT = countdowntimer & 0b00011100
     timerResult = 0b10100000 + RPT
     timerinitial = 0
     if timer <= 0.0625:
@@ -96,8 +98,9 @@ def configure_countdown(MudwattRTC, timer):
     else:
         timerResult += 0b11
         timerinitial = int((timer * (1/60)) - 1)
-    MudwattRTC.write_register(0x18, timerResult)
+    MudwattRTC.write_register(0x19, timerinitial)
     MudwattRTC.write_register(0x1A, timerinitial)
+    MudwattRTC.write_register(0x18, timerResult)
 
     # Set Control2 register bits so that PSW/nIRQ2 pin outputs nTIRQ
     out = MudwattRTC.read_register(0x11)
@@ -107,11 +110,15 @@ def configure_countdown(MudwattRTC, timer):
     outResult = outResult & ~outMask
     MudwattRTC.write_register(0x11, outResult)
 
-def initialize_rtc(f, a, pulse, d, timer):
+def initialize_rtc(f, a, pulse, da, dt, timer):
     MudwattRTC = RTC()
 
+    # Soft reset the RTC to clear old settings
+    MudwattRTC.write_register(0x1F, 0x3C)
+
     # enable trickle charging for the backup battery
-    MudwattRTC.enable_trickle()
+    if not dt:
+        MudwattRTC.enable_trickle()
 
     # disable unused pins
     disable_pins(MudwattRTC)
@@ -152,11 +159,14 @@ def initialize_rtc(f, a, pulse, d, timer):
     MudwattRTC.write_register(0x1C, AOSresult)
 
     # Configure alarm
-    configure_alarm(MudwattRTC, pulse, d)
+    configure_alarm(MudwattRTC, pulse, da)
 
     # Configure countdown timer
     if timer != 0:
         configure_countdown(MudwattRTC, timer)
+    else:
+        countdowntimer = MudwattRTC.read_register(0x18)
+        MudwattRTC.write_register(0x18, countdowntimer & ~0b10000000)
 
     # Write to bit 7 of register 1 to signal that this program initialized the RTC
     sec = MudwattRTC.read_register(0x01)

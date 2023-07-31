@@ -25,10 +25,13 @@ def find_timer(timer):
         timer = (int(timer/60)) * 60
     else:
         timer = 15360
-    print("Timer set to: " + str(timer))
+    if timer == 0:
+        print("Timer disabled (set to 0 seconds)")
+    else:
+        print("Timer set to: " + str(timer))
     return timer
 
-def update_rtc(port, range, trials, f, a, pulse, d, timer):
+def update_rtc(port, range, trials, f, a, pulse, da, dt, timer):
     ser = serial.Serial(port) # open serial port
     ser.baudrate = 115200
 
@@ -57,16 +60,19 @@ def update_rtc(port, range, trials, f, a, pulse, d, timer):
     timerSet = find_timer(timer)
     ser.write(bytearray(
         "\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + \
-        "," + str(pulse) + "," + str(d) + "," + str(timerSet) + ");\x04\x02",
+        "," + str(pulse) + "," + str(da) + "," + str(dt) + "," + str(timerSet) + ");\x04\x02",
         'utf-8'))
 
 # Command line arguments
 parser = argparse.ArgumentParser(
     description='Initialize the RTC and sets the time', \
-    epilog='no optional arguments means accuracy is within 2 hundredths of seconds, 100 trials are \
-        run to determine the average offset, FOS is set to 1 (automatic switching when an \
-        oscillator failure is detected), and AOS is set to 0 (will use XT oscillator when the \
-        system is powered from the battery)')
+    epilog='If no optional arguments are entered, then the program will run 100 \
+        trials to determine the average offset, with time accuracy within 0.02 seconds, \
+        FOS is set to 1 (automatic switching when an oscillator failure is detected), \
+        AOS is set to 0 (will use XT oscillator when the system is powered from the battery), \
+        the alarm is enabled (and initialize alarm to go off once a second if 0 (default value) \
+        is in hundredths alarm register), and the alarm pulse is 1/8192 seconds for XT or \
+        1/64 sec for RC')
 parser.add_argument(
     '--port',
     type=str,
@@ -100,17 +106,21 @@ parser.add_argument(
         2 means 1/64 s for both; 3 means 1/4 s for both; 0 means level (static)'
 )
 parser.add_argument(
-    '-d',
+    '-da',
     action='store_true',
     help='disable the RTC alarm'
 )
 parser.add_argument(
-    '-timer',
+    '-dt',
+    action='store_true',
+    help='disable trickle charging'
+)
+parser.add_argument(
+    '--timer',
     type=float,
     default=0,
-    choices=range(0,15360),
-    help='FIX ME'
+    help='set repeating timer to TIMER seconds'
 )
 args = parser.parse_args()
 
-update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.d, args.timer)
+update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.da, args.dt, args.timer)

@@ -37,19 +37,25 @@ The RTC's CS pin needs to be connected to the RPI's GP10 pin.
 
 
 ## How to run
-Run with:
 
-`python update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {1,2,3}] [-i]`
+usage: update_rtc.py [-h] --port PORT [--range RANGE] [--trials TRIALS] [-f] [-a] [--pulse {0,1,2,3}] [-da] [-dt] [--timer TIMER]
 
-* `--port PORT` sets the port the Raspberry Pi Pico is plugged into
-* `--range RANGE` sets the new accuracy range to RANGE (in hundredths of seconds). Default is 2
-* `--trials TRIALS` sets the new number of trials to get the average offset to TRIALS. Default is 100
-* `-f` means set FOS to 0 (no automatic switching when an oscillator failure is detected)
-* `-a` means set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
-* `--pulse PULSE` sets the length of pulse: 1 means 1/8192 seconds for XT and 1/64 sec for RC; 2 means 1/64 s for both; 3 means 1/4 s for both; 0 means level (static)
-* `-d` means disable the RTC's alarm
+Initialize the RTC and sets the time
 
-If no optional arguments are entered, then the program will run 100 trials to determine the average offset, with time accuracy within 0.02 seconds, 
-FOS is set to 1 (automatic switching when an oscillator failure is detected),
-AOS is set to 0 (will use XT oscillator when the system is powered from the battery),
-the alarm is enabled (and initialize alarm to go off once a second if 0 (default value) is in hundredths alarm register), and the alarm pulse is 1/8192 seconds for XT or 1/64 sec for RC
+options:
+  -h, --help         show this help message and exit
+  --port PORT        sets the port the Raspberry Pi Pico is plugged into
+  --range RANGE      sets the new accuracy range to RANGE
+  --trials TRIALS    sets the new number of trials to get the average offset to TRIALS
+  -f                 set FOS to 0 (no automatic switching when an oscillator failure is detected)
+  -a                 set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
+  --pulse {0,1,2,3}  sets the length of pulse: 1 means 1/8192 seconds for XT and 1/64 sec for RC; 2 means 1/64 s for both; 3 means 1/4 s for both;
+                     0 means level (static)
+  -da                disable the RTC alarm
+  -dt                disable trickle charging
+  --timer TIMER      set repeating timer to TIMER seconds
+
+If no optional arguments are entered, then the program will run 100 trials to determine the average offset, with time accuracy within 0.02 seconds,
+FOS is set to 1 (automatic switching when an oscillator failure is detected), AOS is set to 0 (will use XT oscillator when the system is powered
+from the battery), the alarm is enabled (and initialize alarm to go off once a second if 0 (default value) is in hundredths alarm register), and
+the alarm pulse is 1/8192 seconds for XT or 1/64 sec for RC
