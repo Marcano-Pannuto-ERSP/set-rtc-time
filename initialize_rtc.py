@@ -85,6 +85,11 @@ def configure_countdown(MudwattRTC):
     # countdowntimerResult = countdown & ~countdownMask
     MudwattRTC.write_register(0x18, test)
 
+    # Sets Timer Initial Value
+    timerinitial = MudwattRTC.read_register(0x1A)
+    test2 = 4
+    MudwattRTC.write_register(0x1A, test2)
+
     # Set Control2 register bits so that PSW/nIRQ2 pin outputs nTIRQ
     out = MudwattRTC.read_register(0x11)
     outMask = 0b00010100
