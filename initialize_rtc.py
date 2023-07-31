@@ -48,7 +48,6 @@ def disable_pins(MudwattRTC):
 def configure_alarm(MudwattRTC, pulse, d):
     # Configure AIRQ (alarm) interrupt
     # IM (level/pulse) AIE (enables interrupt) 0x12 intmask
-    # configure the OUT1S bit to see the output of the nIRQ pin
     alarm = MudwattRTC.read_register(0x12)  
     alarm = alarm & ~(0b01100100)
     alarmMask = int(pulse) << 5
@@ -69,6 +68,30 @@ def configure_alarm(MudwattRTC, pulse, d):
     timerMask = 0b00011100
     timerResult = timerControl | timerMask
     MudwattRTC.write_register(0x18, timerResult)
+
+def configure_countdown(MudwattRTC):
+    # Configure TIRQ (countdown timer) interrupt
+    # TIE (enables interrupt) 0x12 intmask
+    countdown = MudwattRTC.read_register(0x12)
+    countdownMask = 0b00001000
+    countdownResult = countdown | countdownMask
+    MudwattRTC.write_register(0x12, countdownResult)
+
+    # TE (enables countdown timer)
+    # Countdown Frequency: TM, TRPT, TFS (0110 --> 1 Hz for 1/64 s)
+    countdowntimer = MudwattRTC.read_register(0x18)
+    test = 0b10100010
+    # countdowntimerMask = 0b10100010
+    # countdowntimerResult = countdown & ~countdownMask
+    MudwattRTC.write_register(0x18, test)
+
+    # Set Control2 register bits so that PSW/nIRQ2 pin outputs nTIRQ
+    out = MudwattRTC.read_register(0x11)
+    outMask = 0b00010100
+    outResult = out | outMask
+    outMask = 0b00001000
+    outResult = outResult | outMask
+    MudwattRTC.write_register(0x11, outResult)
 
 def initialize_rtc(f, a, pulse, d):
     MudwattRTC = RTC()
@@ -116,6 +139,9 @@ def initialize_rtc(f, a, pulse, d):
 
     # Configure alarm
     configure_alarm(MudwattRTC, pulse, d)
+
+    # Configure countdown timer
+    configure_countdown(MudwattRTC)
 
     # Write to bit 7 of register 1 to signal that this program initialized the RTC
     sec = MudwattRTC.read_register(0x01)
