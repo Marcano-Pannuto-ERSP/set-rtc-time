@@ -69,7 +69,7 @@ def configure_alarm(MudwattRTC, pulse, d):
     timerResult = timerControl | timerMask
     MudwattRTC.write_register(0x18, timerResult)
 
-def configure_countdown(MudwattRTC):
+def configure_countdown(MudwattRTC, timer):
     # Configure TIRQ (countdown timer) interrupt
     # TIE (enables interrupt) 0x12 intmask
     countdown = MudwattRTC.read_register(0x12)
@@ -78,27 +78,36 @@ def configure_countdown(MudwattRTC):
     MudwattRTC.write_register(0x12, countdownResult)
 
     # TE (enables countdown timer)
-    # Countdown Frequency: TM, TRPT, TFS (0110 --> 1 Hz for 1/64 s)
+    # Sets the Countdown Timer Frequency and
+    # the Timer Initial Value
     countdowntimer = MudwattRTC.read_register(0x18)
-    test = 0b10100010
-    # countdowntimerMask = 0b10100010
-    # countdowntimerResult = countdown & ~countdownMask
-    MudwattRTC.write_register(0x18, test)
-
-    # Sets Timer Initial Value
-    timerinitial = MudwattRTC.read_register(0x1A)
-    test2 = 4
-    MudwattRTC.write_register(0x1A, test2)
+    RPT = ((countdowntimer >> 2) << 5) >> 3
+    timerResult = 0b10100000 + RPT
+    timerinitial = 0
+    if timer <= 0.0625:
+        timerResult += 0b00
+        timerinitial = int((timer * 4096) - 1)
+    elif timer <= 4:
+        timerResult += 0b01
+        timerinitial = int((timer * 64) - 1)
+    elif timer <= 256:
+        timerResult += 0b10
+        timerinitial = int(timer - 1)
+    else:
+        timerResult += 0b11
+        timerinitial = int((timer * (1/60)) - 1)
+    MudwattRTC.write_register(0x18, timerResult)
+    MudwattRTC.write_register(0x1A, timerinitial)
 
     # Set Control2 register bits so that PSW/nIRQ2 pin outputs nTIRQ
     out = MudwattRTC.read_register(0x11)
     outMask = 0b00010100
     outResult = out | outMask
     outMask = 0b00001000
-    outResult = outResult | outMask
+    outResult = outResult & ~outMask
     MudwattRTC.write_register(0x11, outResult)
 
-def initialize_rtc(f, a, pulse, d):
+def initialize_rtc(f, a, pulse, d, timer):
     MudwattRTC = RTC()
 
     # enable trickle charging for the backup battery
@@ -146,7 +155,8 @@ def initialize_rtc(f, a, pulse, d):
     configure_alarm(MudwattRTC, pulse, d)
 
     # Configure countdown timer
-    configure_countdown(MudwattRTC)
+    if timer != 0:
+        configure_countdown(MudwattRTC, timer)
 
     # Write to bit 7 of register 1 to signal that this program initialized the RTC
     sec = MudwattRTC.read_register(0x01)

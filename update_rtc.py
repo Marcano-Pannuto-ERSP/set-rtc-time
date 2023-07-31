@@ -14,8 +14,21 @@ import serial
 from constant_time import constant_time
 from server_test_time import server_test_time
 
+def find_timer(timer):
+    if timer <= 0.0625:
+        timer = (int(timer * 4096))/4096
+    elif timer <= 4:
+        timer = (int(timer * 64))/64
+    elif timer <= 256:
+        timer = int(timer)
+    elif timer <= 15360:
+        timer = (int(timer/60)) * 60
+    else:
+        timer = 15360
+    print("Timer set to: " + str(timer))
+    return timer
 
-def update_rtc(port, range, trials, f, a, pulse, d):
+def update_rtc(port, range, trials, f, a, pulse, d, timer):
     ser = serial.Serial(port) # open serial port
     ser.baudrate = 115200
 
@@ -41,9 +54,10 @@ def update_rtc(port, range, trials, f, a, pulse, d):
         offset = int(server_test_time(port, trials) * 100)
 
     # Initialize the pins
+    timerSet = find_timer(timer)
     ser.write(bytearray(
         "\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + \
-        "," + str(pulse) + "," + str(d) + ");\x04\x02",
+        "," + str(pulse) + "," + str(d) + "," + str(timerSet) + ");\x04\x02",
         'utf-8'))
 
 # Command line arguments
@@ -90,6 +104,13 @@ parser.add_argument(
     action='store_true',
     help='disable the RTC alarm'
 )
+parser.add_argument(
+    '-timer',
+    type=float,
+    default=0,
+    choices=range(0,15360),
+    help='FIX ME'
+)
 args = parser.parse_args()
 
-update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.d)
+update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.d, args.timer)
