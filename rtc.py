@@ -59,7 +59,6 @@ class RTC:
         self.write_register(0x20, 0x00)
         self.write_register(0x1F, 0x00)
 
-
     def __set_time_calendar(self, calendar):
         tmp_time = bytearray(self.read_bulk(0, 8))
 

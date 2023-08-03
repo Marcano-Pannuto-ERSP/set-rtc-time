@@ -116,9 +116,12 @@ def initialize_rtc(f, a, pulse, da, dt, timer):
     # Soft reset the RTC to clear old settings
     MudwattRTC.write_register(0x1F, 0x3C)
 
-    # enable trickle charging for the backup battery
+    # enable/disable trickle charging for the backup battery
     if not dt:
         MudwattRTC.enable_trickle()
+
+    if dt:
+        MudwattRTC.disable_trickle()
 
     # disable unused pins
     disable_pins(MudwattRTC)
