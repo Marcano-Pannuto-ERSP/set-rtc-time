@@ -8,7 +8,7 @@ We will program the RTC using a Raspberry Pi Pico that runs with Micropython.
 Sets the time of the RTC with accuracy of 0.02 seconds (accuracy can be changed with --range command line argument)
 
 Initializes the RTC by:
-- enabling trickle charging for backup battery
+- enabling/disabling trickle charging for backup battery
 - disabling unused pins
 - changing settings to specify disabling SPI in absence of VCC
 - enabling/disabling automatic RC/XT oscillator switching according to user input
