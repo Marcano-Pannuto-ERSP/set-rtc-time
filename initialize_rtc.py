@@ -113,9 +113,6 @@ def configure_countdown(MudwattRTC, timer):
 def initialize_rtc(f, a, pulse, da, dt, timer):
     MudwattRTC = RTC()
 
-    # Soft reset the RTC to clear old settings
-    MudwattRTC.write_register(0x1F, 0x3C)
-
     # enable/disable trickle charging for the backup battery
     if not dt:
         MudwattRTC.enable_trickle()
