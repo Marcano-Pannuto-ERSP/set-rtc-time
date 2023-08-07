@@ -50,10 +50,12 @@ options:
 *  `-f`                 set FOS to 0 (no automatic switching when an oscillator failure is detected)
 *  `-a`                 set AOS to 1 (automatically switches to RC oscillator when the system is powered from the battery)
 *  `--pulse {0,1,2,3}`  sets the length of pulse: 1 means 1/8192 seconds for XT and 1/64 sec for RC; 2 means 1/64 s for both; 3 means 1/4 s for both;
-                     0 means level (static)
+                        0 means level (static)
 *  `-da`                disable the RTC alarm
 *  `-dt`                disable trickle charging
 *  `--timer TIMER`      set repeating timer to TIMER seconds. Maximum value is 15360
+*  `--repeat REPEAT`    sets the repeat function for the alarm: 1 means once per year, 2 means once per month, 3 means once per week, 4 means once per day,
+                        5 means once per hour, 6 means once per minute, 7 means once per second'
 
 defaults (if no optional arguments are entered):
 * the program will run 100 trials to determine the average offset
@@ -64,3 +66,4 @@ defaults (if no optional arguments are entered):
 * the alarm is enabled (and initialize alarm to go off once a second if 0 (default value) is in hundredths alarm register)
 * the alarm pulse is 1/8192 seconds for XT or 1/64 sec for RC
 * the timer is disabled
+* the alarm repeats every second

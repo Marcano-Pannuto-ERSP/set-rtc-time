@@ -45,10 +45,10 @@ def disable_pins(MudwattRTC):
     MudwattRTC.write_register(0x27, IOBMresult)
 
 # Set up registers that control the alarm
-def configure_alarm(MudwattRTC, pulse, d):
+def configure_alarm(MudwattRTC, pulse, d, repeat):
     # Configure AIRQ (alarm) interrupt
     # IM (level/pulse) AIE (enables interrupt) 0x12 intmask
-    alarm = MudwattRTC.read_register(0x12)  
+    alarm = MudwattRTC.read_register(0x12)
     alarm = alarm & ~(0b01100100)
     alarmMask = int(pulse) << 5
     if not d:
@@ -62,10 +62,10 @@ def configure_alarm(MudwattRTC, pulse, d):
     outResult = out | outMask
     MudwattRTC.write_register(0x11, outResult)
 
-    # Set RPT bits in Countdown Timer Control register to control how often the alarm interrupt 
-    # repeats. Set it to 7 for now (once a second if hundredths alarm register contains 0)
+    # Set RPT bits in Countdown Timer Control register to control how often the alarm interrupt repeats.
     timerControl = MudwattRTC.read_register(0x18)
-    timerMask = 0b00011100
+    timerControl = timerControl & ~(0b00011100)
+    timerMask = int(repeat) << 2
     timerResult = timerControl | timerMask
     MudwattRTC.write_register(0x18, timerResult)
 
@@ -110,7 +110,7 @@ def configure_countdown(MudwattRTC, timer):
     outResult = outResult & ~outMask
     MudwattRTC.write_register(0x11, outResult)
 
-def initialize_rtc(f, a, pulse, da, dt, timer):
+def initialize_rtc(f, a, pulse, da, dt, timer, repeat):
     MudwattRTC = RTC()
 
     # enable/disable trickle charging for the backup battery
@@ -159,7 +159,7 @@ def initialize_rtc(f, a, pulse, da, dt, timer):
     MudwattRTC.write_register(0x1C, AOSresult)
 
     # Configure alarm
-    configure_alarm(MudwattRTC, pulse, da)
+    configure_alarm(MudwattRTC, pulse, da, repeat)
 
     # Configure countdown timer
     if timer != 0:

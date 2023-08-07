@@ -31,7 +31,7 @@ def find_timer(timer):
         print("Timer set to: " + str(timer))
     return timer
 
-def update_rtc(port, range, trials, f, a, pulse, da, dt, timer):
+def update_rtc(port, range, trials, f, a, pulse, da, dt, timer, repeat):
     ser = serial.Serial(port) # open serial port
     ser.baudrate = 115200
 
@@ -60,7 +60,7 @@ def update_rtc(port, range, trials, f, a, pulse, da, dt, timer):
     timerSet = find_timer(timer)
     ser.write(bytearray(
         "\x01import initialize_rtc;initialize_rtc.initialize_rtc(" + str(f) + ", " + str(a) + \
-        "," + str(pulse) + "," + str(da) + "," + str(dt) + "," + str(timerSet) + ");\x04\x02",
+        "," + str(pulse) + "," + str(da) + "," + str(dt) + "," + str(timerSet) + "," + str(repeat) + ");\x04\x02",
         'utf-8'))
 
 # Command line arguments
@@ -121,6 +121,15 @@ parser.add_argument(
     default=0,
     help='set repeating timer to TIMER seconds'
 )
+parser.add_argument(
+    '--repeat',
+    type=int,
+    default=7,
+    choices=range(1,8),
+    help='sets the repeat function for the alarm: 1 means once per year, 2 means once per \
+    month, 3 means once per week, 4 means once per day, 5 means once per hour, 6 means once \
+    per minute, 7 means once per second'
+)
 args = parser.parse_args()
 
-update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.da, args.dt, args.timer)
+update_rtc(args.port, args.range, args.trials, args.f, args.a, args.pulse, args.da, args.dt, args.timer, args.repeat)
