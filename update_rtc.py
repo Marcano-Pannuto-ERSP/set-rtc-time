@@ -79,7 +79,7 @@ parser.add_argument(
     required=True,
     help='sets the port the Raspberry Pi Pico is plugged into'
 )
-parser.add_argument('--range', type=int, default=2, help='sets the new accuracy range to RANGE')
+parser.add_argument('--range', type=int, default=1, help='sets the new accuracy range to RANGE')
 parser.add_argument(
     '--trials',
     type=int,
